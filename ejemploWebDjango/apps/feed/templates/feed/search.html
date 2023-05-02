@@ -1,0 +1,77 @@
+{% extends 'core/base.html' %}
+
+{% load humanize %}
+
+{% block content %}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-12">
+                <h1 class="title">Search</h1>
+                <p>Search term: "{{ query }}"</p>
+                <hr>
+                <form method="get" action="{% url 'search' %}">
+                    <div class="field">
+                        <div class="control">
+                            <input type="text" class="input" name="query" value="{{ query }}">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <button class="button is-success">Search</button>
+                        </div>
+                    </div>
+                </form>
+
+                <hr>
+
+                <div class="search-results">
+                    {% if not users and not posts %}
+                        <p>No se ha encontrado ningun resultado</p>
+                    {% endif %}
+                    {% if users %}
+                        <strong>Usuarios encontrados</strong>
+                        {% for user in users %}
+                            <p>
+                                <figure>
+                                    <p class="image is-64x64">
+                                        {% if user.userprofile.avatar %}
+                                            <img src="{{ user.userprofile.avatar.url }}">
+                                        {% endif %}
+                                    </p>
+                                </figure>
+                                {{ user.username }} 
+                                <a href="{% url 'userprofile' user.username %}" class="button is-success">Visitar perfil</a>
+                            </p>
+                        {% endfor %}
+                    {% endif %}
+                    {% for post in posts %}
+                        <p>
+                            <figure>
+                                <p class="image is-64x64">
+                                    {% if post.created_by.userprofile.avatar %}
+                                        <img src="{{ post.created_by.userprofile.avatar.url }}">
+                                    {% endif %}
+                                </p>
+                            </figure>
+    
+                            <div class="media-content">
+                                <div class="content">
+                                    <strong>{{ post.created_by.username}}</strong>
+                                    <small>{{post.created_at|naturaltime}}</small>
+                                    <br>
+                                    {{post.descripcion}}
+                                    <br>
+                                    <a class="button" @click="likePost({{ post.id }})" v-if="!liked_posts.includes({{ post.id }})">&lt;3</a>
+                                    <span v-if=" liked_posts.includes({{ post.id }})">Liked</span>
+                                    <small id="likes-{{ post.id}}">{{ post.likes.count }} likes</small>
+    
+                                </div>
+                            </div>
+                            <a href="{% url 'userprofile' post.created_by.user.username %}" class="button is-success">Visitar perfil</a>
+                        </p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{%endblock%}

@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+
+{% load humanize %}
+
+{% block content%}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-12">
+                <h1 class="tittle">{{ user.username }}</h1>
+                <br>
+                {% if user.userprofile.avatar %}
+                    <figure class="image is-128x128">
+                        <img src="{{ user.userprofile.avatar.url }}">
+
+                    </figure>
+                {% endif %}
+                <br><br>
+                <a href="{% url 'likesreceived' user.username %}" class="button is-success">Ver likes recividos</a>
+                <a href="{% url 'likesgiven' user.username %}" class="button is-success">Ver likes dados</a>
+                <p>Likes recibidos: {{ user.userprofile.liked_by.count }}</p>
+                <p>Likes dados: {{ user.userprofile.likes.count }}</p>
+                {% if user != request.user %}
+                    <a href="{% url 'conversation' user.id %}" class="button is-success">Mandar mensaje</a>
+                    {% if request.user.userprofile in user.userprofile.liked_by.all %}
+                        <a href="{% url 'unlike_user' user.username %}" class="button is-danger"> Quitar Like</a>
+                    {% else %}
+                        <a href="{% url 'like_user' user.username %}" class="button is-success"> Dar Like</a>
+                    
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column is-8">
+                <div class="wrapper-post">
+                    {% for post in user.posts.all %}
+                        <div class="post">
+                            <article class="media">
+                                <figure>
+                                    <p class="image is-64x64">
+                                        {% if user.userprofile.avatar %}
+                                            <img src="{{ user.userprofile.avatar.url }}">
+                                        {% endif %}
+                                    </p>
+                                </figure>
+
+                                <div class="media-content">
+                                    <div class="content">
+                                        <strong>{{ post.created_by.username}}</strong>
+                                        <small>{{post.created_at|naturaltime}}</small>
+                                        <br>
+                                        {{post.descripcion}}
+                                    </div>
+                                </div>
+                            </article>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

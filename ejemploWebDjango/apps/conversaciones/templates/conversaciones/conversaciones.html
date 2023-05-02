@@ -1,0 +1,29 @@
+{% extends 'core/base.html' %}
+
+{% load humanize %}
+
+{% block content%}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-12">
+                <h1 class="tittle">Conversaciones</h1>
+
+                <div class="conversaciones-list">
+                    {% for conversacion in conversaciones %}
+                        <div class="conversaciones-list-item">
+                            {% for user in conversacion.users.all %}
+                                {% if user != request.user %}
+                                    <a href="{% url 'conversacion' user.id %}">
+                                        <p>{{ user.username }} - {{ conversacion.modified_at|naturaltime }} </p>
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% empty %}
+                        <p>Nadie quiere hablar contigo</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

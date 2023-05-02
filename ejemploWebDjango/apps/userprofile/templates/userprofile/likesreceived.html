@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+
+{% block content%}
+    <div class="container">
+        <div class="columns">
+            <div class="column is-12">
+                <h1 class="tittle">Who likes you {{ user.username }}</h1>
+                <p>Likes recividos: {{ user.userprofile.liked_by.count }}</p>
+            </div>
+        </div>
+        <div class="columns">
+            <div class="column is-8">
+                {% for user in user.userprofile.liked_by.all %}
+                <p> <figure>
+                        <p class="image is-64x64">
+                            {% if user.userprofile.avatar %}
+                                <img src="{{ user.user.userprofile.avatar.url }}">
+                                <a href="{% url 'userprofile' user.user.username %}">{{ user.user.username }}</a>
+                            {% endif %}
+                        </p>
+                    </figure>
+                </p>
+                {% empty%}
+                    {% if request.user == user %}
+                        <p>Nadie te quiere</p>
+                    {% else%}
+                        <p>A {{ user.username }} no lo quiere nadie</p>
+                    {% endif %}
+                    
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
